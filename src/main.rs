@@ -6,7 +6,7 @@ use tokio::io::AsyncReadExt;
 use tokio::io::AsyncWriteExt;
 
 #[derive(Debug, Parser)]
-struct CLI {
+struct Cli {
     #[command(subcommand)]
     command: Command,
 }
@@ -34,7 +34,7 @@ struct Read {
 
 #[tokio::main]
 async fn main() {
-    match CLI::parse().command {
+    match Cli::parse().command {
         Command::Write(Write { store, files }) => {
             println!("Creating {files} files with {store} entries");
             (0..files)
@@ -85,8 +85,7 @@ async fn main() {
                 .collect::<Vec<Vec<u64>>>()
                 .await
                 .into_iter()
-                .map(|iter| iter.into_iter())
-                .flatten()
+                .flat_map(|iter| iter.into_iter())
                 .sum();
 
             println!("{sum}");
